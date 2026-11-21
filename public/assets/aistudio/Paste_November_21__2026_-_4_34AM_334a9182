@@ -1,0 +1,1286 @@
+Act as a senior multidisciplinary product engineering team comprising:
+- Principal Product Manager
+- Senior Product Designer and UI/UX Architect
+- Senior Frontend Engineer
+- Senior Backend Integration Engineer
+- AI and Machine Learning Engineer
+- Data Scientist
+- Business Intelligence and Data Analyst
+- Conversational AI Engineer
+- Cybersecurity Engineer
+- Quality Assurance Engineer
+Your task is to design, develop and implement a polished, functional, responsive Digital Guest Experience Platform for KARAMO Hotels.
+
+This is not a request for a conceptual prototype, a static landing page, a collection of disconnected screens or a visual demonstration with non-functional buttons.
+
+Build a coherent application with working navigation, reusable components, functional forms, appropriate backend integrations, realistic error handling, responsive layouts and clear separation between operational data, analytical data and demonstration features.
+
+You are expected to inspect the supplied project resources before making implementation decisions.
+
+Do not ask me to manually resolve matters that can be established by examining the supplied documentation, repository, API definitions, README files or datasets.
+
+Where information is unavailable, make a sensible implementation decision, document the assumption and avoid inventing functionality or business policies.
+
+Prioritise a working, cohesive MVP over an unnecessarily elaborate implementation.
+The following resources are supplied or will be made available to you.
+
+Treat them according to their authority.
+RESOURCE: Cross-Team Product Specification.docx
+
+This document contains the product requirements, user journeys, functional requirements, architecture, FAQ, cybersecurity review and cross-team implementation expectations.
+
+Use it as the primary product reference.
+
+Extract and respect:
+- Product vision and objectives.
+- User groups and their needs.
+- MVP scope and phased roadmap.
+- User journeys.
+- Functional requirements.
+- Interface and accessibility expectations.
+- Payment workflow.
+- Data science and analytics requirements.
+- Virtual assistant requirements.
+- Security and privacy requirements.
+- Business rules and exceptions.
+Do not silently expand the MVP into every feature described in later phases.
+
+The immediate implementation should prioritise the original MVP and demonstrate selected intelligence, assistant and staff capabilities where the supplied resources allow.
+RESOURCE: https://github.com/Iamkken/TECHYJAUNT_GROUP_7
+
+This repository is the authority for the existing transactional backend.
+
+Inspect the repository, README, routes, controllers, database configuration, middleware, validation rules and available endpoints before implementing frontend integration.
+
+The existing backend uses:
+- Node.js
+- Express.js
+- PostgreSQL
+- JWT authentication
+- Email OTP verification
+- Joi validation
+- Nodemailer
+- Paystack Test Mode
+The documented API includes:
+
+Authentication:
+- POST /api/auth/register
+- POST /api/auth/verify-email
+- POST /api/auth/resend-otp
+- POST /api/auth/login
+Hotel and room information:
+- GET /api/hotels
+- GET /api/rooms
+Availability:
+- GET /api/availability
+Bookings:
+- POST /api/bookings
+- GET /api/bookings/my-bookings
+Payments:
+- POST /api/payments/initialize
+- POST /api/payments/verify
+Reviews:
+- POST /api/reviews
+Inspect the actual repository to confirm the request and response structures. Do not assume that the endpoint list above is a complete API specification.
+
+The existing backend is authoritative for:
+- Hotel records.
+- Room records.
+- Room prices.
+- Availability.
+- Booking creation.
+- Booking status.
+- Payment status.
+- Booking confirmation.
+- Guest booking history.
+Never hardcode transactional information in the frontend when it can be obtained from the backend.
+
+Never calculate or independently determine the authoritative booking price in the browser.
+
+Never declare a booking confirmed merely because the guest has returned from the Paystack checkout page.
+
+A booking is confirmed only after successful backend-side payment verification.
+
+Use the backend's existing booking and payment workflow wherever possible.
+
+Do not replace the backend with mock data or create a second booking engine.
+RESOURCE: https://github.com/Jirehcode/guest-experience-ds.git
+
+Inspect this repository and its README if accessible.
+
+Additional resources will include:
+- Original Excel dataset.
+- Cleaned dataset.
+- Data cleaning log.
+- Pivot tables.
+- Dashboard visualisations.
+- Guest-experience data science notebooks.
+- Guest-experience platform notebook.
+- Guest-experience API notebook.
+- FastAPI source files, where available.
+The data science implementation is the authority for historical analytical outputs and guest intelligence.
+
+The existing analytical work includes:
+- Guest segmentation.
+- Guest behaviour analysis.
+- Repeat guest recognition.
+- Guest profile insights.
+- Checkout health analysis.
+- Payment-method friction analysis.
+- Cancellation-related insights.
+- Personalisation indicators.
+Use the actual analytical implementation and available API responses.
+
+Do not invent model outputs, predictive accuracy, historical records or analytical metrics.
+
+The analytical dataset is historical. It must not override live backend room availability, room prices, bookings or payment status.
+
+The backend and data science service must remain logically independent.
+
+If the data science service is unavailable, the booking engine must continue working.
+
+If the data science repository or API cannot be accessed, implement the integration boundary and a clearly labelled demonstration state. Do not pretend the integration is live.
+Apply this authority hierarchy:
+1. Existing backend code and live API responses govern transactional behaviour.
+2. The product specification governs the intended product experience and requirements.
+3. The data science source code and dataset govern analytical outputs.
+4. The README files govern setup and implementation instructions, subject to verification against actual code.
+5. Visualisations guide presentation but do not override source data.
+6. Where sources conflict, preserve the backend's transactional authority, identify the conflict and document the resolution.
+Do not silently reconcile conflicting prices, room names, currency information, hotel records or analytical figures.
+Create a premium digital guest experience for KARAMO Hotels that enables guests to discover the hotel, explore rooms, check availability, book accommodation, pay securely, retrieve bookings and access assistance through a streamlined digital experience.
+
+The platform should reduce booking friction, improve guest confidence, support repeat stays and provide hotel personnel with useful operational and analytical information.
+
+The product should feel like a genuine hospitality platform rather than a generic hotel booking template.
+
+Brand identity: KARAMO HOTELS.
+
+Use the supplied KARAMO branding assets if available. Preserve the existing brand identity rather than inventing a completely unrelated brand.
+
+The application must be responsive across:
+- Desktop browsers.
+- Tablet browsers.
+- Mobile browsers.
+Implement a responsive web application. Do not spend time building separate native iOS or Android applications.
+Build the following experiences.
+Implement:
+1. Public homepage.
+2. Hotel information and room discovery.
+3. Room search.
+4. Availability checking.
+5. Room detail pages.
+6. Guest registration.
+7. Email verification using the existing OTP workflow.
+8. Guest login.
+9. Booking creation.
+10. Booking summary.
+11. Paystack test-mode payment.
+12. Payment verification.
+13. Booking confirmation.
+14. Booking reference display.
+15. Guest booking history.
+16. Booking detail and retrieval.
+17. Guest profile information where supported.
+18. Review submission where supported.
+19. FAQ and guest support.
+20. Virtual assistant interface.
+The guest journey must be coherent from discovery to confirmed booking.
+Create a separate staff/admin portal.
+
+It must not simply be a collection of administrative links inside the guest interface.
+
+Provide a distinct staff sign-in entry point and separate application layout.
+
+Create role-aware navigation and permission boundaries for the following intended user categories:
+- Front desk.
+- Service staff.
+- Hotel manager.
+- Finance.
+- Platform administrator.
+However, inspect the existing backend before implementing authentication or permissions for these roles.
+
+If staff authentication, staff roles or administrative APIs do not exist, do not fabricate secure access.
+
+In that situation:
+- Build the staff portal interface.
+- Clearly label any demonstration access as DEMO MODE.
+- Use controlled demonstration data where required.
+- Keep demonstration data separate from live guest and booking records.
+- Do not expose guest personal information unnecessarily.
+- Do not allow demonstration users to perform real administrative actions.
+The staff portal should demonstrate:
+- Overview dashboard.
+- Booking overview.
+- Booking status.
+- Guest information with appropriate access restrictions.
+- Occupancy and room availability where data exists.
+- Revenue and payment summaries where supported.
+- Guest segmentation and analytical insights.
+- Checkout health.
+- Payment performance.
+- Operational alerts.
+- Administrative navigation.
+Separate operational metrics from historical analytical metrics.
+
+Clearly identify the source and time period of each metric.
+Integrate the supplied data science work where technically possible.
+
+Prioritise:
+- Guest segmentation.
+- Guest profile insights.
+- Repeat guest recognition.
+- Historical booking behaviour.
+- Checkout health.
+- Payment friction.
+- Cancellation insights.
+- Personalisation indicators.
+Use the actual API endpoints and response structures from the data science implementation.
+
+The supplied API design includes:
+
+GET /api/v1/guest-experience/bookings/{booking_id}/insights
+
+GET /api/v1/guest-experience/users/{user_id}/profile
+
+GET /api/v1/guest-experience/checkout-health
+
+Verify these endpoints against the actual source code before integration.
+
+The analytics experience must:
+- Use readable charts and summaries.
+- Display meaningful labels and explanations.
+- Show loading, empty and error states.
+- Distinguish unavailable data from zero values.
+- Identify historical data as historical.
+- Clearly label directional estimates.
+- Avoid presenting uncertain predictions as facts.
+The supplied dataset is relatively small and contains only eight cancellation records. Treat cancellation-related predictions as directional estimates, not definitive risk classifications.
+
+Never use cancellation estimates to penalise guests or prevent legitimate bookings.
+
+Do not label pre-booking drop-offs as abandoned checkouts unless the relevant events are actually tracked.
+
+Keep Confirmed, Completed and Cancelled statuses distinct.
+
+Respect the supplied segmentation labels:
+- SHORT_STAY_VALUE
+- LONG_STAY_BUDGET
+- HIGH_SPEND_EXTENDED
+Do not create additional segments without evidence from the supplied model.
+Implement an accessible conversational assistant within the guest-facing platform.
+
+The assistant should:
+- Answer frequently asked questions.
+- Explain hotel facilities and services.
+- Explain booking steps.
+- Help guests understand payment status.
+- Guide guests through room discovery.
+- Use live backend information when answering questions about availability and prices.
+- Retrieve authenticated guest booking information only after appropriate identity verification.
+- Explain available platform features.
+- Guide guests towards human assistance when necessary.
+The assistant must use approved hotel content and the supplied FAQ.
+
+It must not invent:
+- Room prices.
+- Availability.
+- Hotel policies.
+- Booking confirmations.
+- Refund approvals.
+- Payment outcomes.
+- Hotel facilities.
+- Operational promises.
+If it cannot verify information, it must say so.
+
+The assistant must not access another guest's information.
+
+Do not give the assistant unrestricted authority to create, cancel or modify bookings.
+
+Any action that changes a booking or involves payment must require explicit guest confirmation and must use authorised backend functionality.
+
+Provide a clear option to contact a human.
+
+Disclose that the guest is interacting with an AI assistant.
+Create a complete public-facing website.
+Include:
+- Home.
+- Rooms.
+- About Us.
+- Contact Us.
+- FAQ.
+- Sign In / My Account.
+- Book Now.
+The navigation must be responsive, with a suitable mobile menu.
+The homepage should include:
+1. Premium hero section.
+2. Clear KARAMO Hotels identity.
+3. Strong booking/search panel.
+4. Check-in date.
+5. Check-out date.
+6. Number of guests.
+7. Search availability action.
+8. Featured rooms.
+9. Hotel facilities and amenities.
+10. Guest experience highlights.
+11. Brand introduction.
+12. Guest testimonials, only where supplied or clearly identified as demonstration content.
+13. Frequently asked questions preview.
+14. Contact and booking call to action.
+15. Complete footer.
+The homepage must immediately communicate what KARAMO offers and make booking easy.
+Create a room listing experience using backend room data.
+
+Each room card should display, where information is available:
+- Room image.
+- Room name.
+- Description.
+- Capacity.
+- Bed information.
+- Amenities.
+- Price per night.
+- Availability status.
+- View details action.
+- Book/select action.
+Include suitable sorting and filtering based on actual available room attributes.
+
+Do not invent room types, amenities or prices.
+Implement the search flow using the existing backend.
+
+Search should collect:
+- Check-in date.
+- Check-out date.
+- Guest count.
+Use the documented availability endpoint and inspect its actual response structure.
+
+Display:
+- Available rooms.
+- Room details.
+- Price per night.
+- Total stay price where returned or calculated using verified backend rules.
+- Relevant room information.
+- Appropriate empty states.
+If no rooms are available:
+- Explain that no rooms are available for the selected dates.
+- Provide a clear option to change dates.
+- Offer contact information where appropriate.
+Do not invent alternative availability.
+
+Validate dates and guest numbers before submitting requests.
+Each room detail page should provide:
+- Room images.
+- Room description.
+- Amenities.
+- Occupancy capacity.
+- Bed information.
+- Price information.
+- Availability.
+- Booking action.
+Use only available room information.
+Implement the existing backend authentication workflow.
+
+Registration:
+- Full name.
+- Email.
+- Phone number.
+- Password.
+Email verification:
+- OTP input.
+- OTP verification.
+- Resend OTP functionality.
+- Expiry and error handling.
+Login:
+- Email.
+- Password.
+Use JWT authentication according to the existing backend implementation.
+
+Store authentication tokens securely using an appropriate strategy for the selected architecture.
+
+Protect authenticated routes.
+
+Do not expose tokens, credentials or secrets in browser logs.
+
+Handle expired or invalid sessions gracefully.
+
+Do not invent social login or phone OTP login if these are not supported by the backend.
+Create a streamlined booking process.
+
+The booking flow should include:
+1. Selected room.
+2. Check-in and check-out dates.
+3. Guest count.
+4. Guest details.
+5. Booking summary.
+6. Price breakdown.
+7. Payment.
+8. Confirmation.
+Minimise repeated data entry.
+
+Use existing authenticated guest details where available.
+
+Display a progress indicator.
+
+Provide inline validation and clear error messages.
+
+Preserve booking context when navigating between steps.
+
+The backend remains responsible for authoritative booking calculations and inventory validation.
+
+The backend's temporary booking hold is approximately 15 minutes according to the supplied implementation. Respect the actual backend behaviour.
+
+If the hold expires, explain what happened and allow the guest to check availability again.
+Integrate Paystack Test Mode through the existing backend.
+
+The frontend must:
+1. Request booking creation through the backend.
+2. Request payment initialisation through the backend.
+3. Redirect or open the appropriate Paystack checkout experience.
+4. Return to the application after payment.
+5. Request backend payment verification.
+6. Display the actual result returned by the backend.
+Never:
+- Expose Paystack secret keys.
+- Calculate or alter the authoritative amount.
+- Assume that a successful redirect means payment succeeded.
+- Mark a booking confirmed without backend verification.
+- Generate fabricated payment references.
+Provide clear states for:
+- Payment processing.
+- Payment successful.
+- Payment failed.
+- Payment pending.
+- Verification error.
+- Booking hold expired.
+- Payment requiring manual resolution.
+If the backend does not provide webhook handling, do not pretend that it does. Document the gap and use the existing verification endpoint for the implemented guest flow.
+Implement authenticated booking retrieval using the existing endpoint.
+
+Display available booking information, including:
+- Booking reference.
+- Room.
+- Dates.
+- Guest count.
+- Booking status.
+- Payment status.
+- Relevant booking details.
+The guest must only be able to retrieve their own bookings.
+
+Do not implement cancellation, modification or refunds as functional actions unless the backend explicitly supports them.
+
+Where unsupported, display the appropriate contact or assistance route.
+Implement review submission using the existing backend endpoint.
+
+Respect the backend's eligibility requirements.
+
+Display clear feedback when a review is not permitted.
+
+Do not create reviews for bookings that do not meet the backend's rules.
+This section is mandatory.
+
+Create complete, navigable and responsive information pages.
+
+Do not leave footer links pointing to empty pages, '#' or non-existent destinations.
+Create an About Us page that includes:
+- KARAMO Hotels introduction.
+- Brand story.
+- Hospitality philosophy.
+- Guest experience commitment.
+- Service standards, where supplied.
+- A clear booking call to action.
+Use supplied company information where available.
+
+Do not invent awards, certifications, years of operation, property locations or company history.
+
+Where company-specific details are missing, use clearly marked editable content rather than presenting invented claims as facts.
+Create a Contact Us page containing:
+- Contact form.
+- Name.
+- Email.
+- Phone number, where appropriate.
+- Subject/category.
+- Message.
+- Form validation.
+- Submission confirmation.
+- Error handling.
+Display verified contact details from the supplied documentation or assets.
+
+If contact email addresses, telephone numbers or physical addresses are unavailable, use clearly labelled editable placeholders.
+
+Do not invent contact details.
+
+If no contact submission API exists, implement a clearly labelled frontend demonstration or a configurable integration boundary. Do not pretend the message has been delivered.
+Create a dedicated Privacy Policy page.
+
+Use the supplied cybersecurity and privacy documentation as the basis.
+
+Cover, where supported:
+- Personal information collected.
+- Purpose of processing.
+- Account information.
+- Booking information.
+- Payment processing through Paystack.
+- Data sharing with service providers.
+- Security measures.
+- Data retention.
+- Guest rights.
+- Marketing and personalisation consent.
+- Contact route for privacy enquiries.
+Do not claim that the platform has completed legal compliance certification or legal review.
+
+Mark the policy as a draft requiring legal review before production.
+Create a dedicated Terms and Conditions page.
+
+Use only confirmed policies and supplied product information.
+
+Cover the relevant areas:
+- Booking process.
+- Payment.
+- Booking confirmation.
+- Guest responsibilities.
+- Changes and cancellations.
+- Refunds.
+- Hotel rules.
+- Website use.
+- Limitations and disclaimers.
+- Contact information.
+Where cancellation periods, refund rules, check-in times, check-out times, fees or other business policies have not been supplied, do not invent them.
+
+Use clearly identified editable policy placeholders and mark them as requiring management/legal approval.
+Create a dedicated FAQ page.
+
+Use the supplied FAQ as the primary source.
+
+Organise questions into categories such as:
+- Reservations.
+- Payments.
+- Check-in and check-out.
+- Rooms and facilities.
+- Booking changes.
+- Cancellations and refunds.
+- Guest support.
+Use expandable accordion sections.
+
+Make the FAQ searchable if practical.
+
+The chatbot should use the same approved FAQ content to ensure consistent answers.
+
+Do not invent answers to questions not covered by the supplied materials.
+Create a Careers page.
+
+Include:
+- Introduction to working at KARAMO Hotels.
+- A brief statement about the hospitality environment and career opportunities.
+- Job opportunities section.
+- Application/contact call to action.
+Do not invent vacancies, salaries, employment benefits or recruitment contact details.
+
+If no vacancies are supplied, display a suitable message that there are currently no published vacancies and provide an editable recruitment contact route.
+Include:
+- About Us.
+- Contact Us.
+- Privacy Policy.
+- Terms & Conditions.
+- FAQs.
+- Careers.
+- Rooms.
+- My Bookings.
+- Sign In.
+- Social media links, only where verified details are supplied.
+Organise the footer into logical columns.
+
+Include copyright information and the KARAMO Hotels brand.
+
+Ensure every link works.
+Create a separate staff/admin application area with its own layout and navigation.
+
+The interface should be professional, information-rich and easy to use.
+
+Include the following sections:
+- Booking summary.
+- Booking status distribution.
+- Available operational indicators.
+- Recent activity.
+- Relevant alerts.
+- Booking list.
+- Booking reference.
+- Guest information subject to permissions.
+- Room.
+- Dates.
+- Booking status.
+- Payment status.
+- Guest segments.
+- Repeat guest indicators.
+- Guest profile insights.
+- Historical booking behaviour.
+- Checkout health.
+- Payment-method performance.
+- Cancellation insights.
+- Historical booking trends.
+- Guest segmentation.
+- Relevant operational status indicators.
+- Staff navigation.
+- Service-related navigation where appropriate.
+- User and role management interface.
+- Configuration interface.
+- Audit/activity area.
+IMPORTANT:
+
+The existing backend does not establish that a complete staff authentication and administrative API system is available.
+
+Inspect before integration.
+
+Do not invent working administrative permissions or create insecure authentication shortcuts.
+
+Where necessary, use a clearly identified demonstration mode with isolated sample data.
+
+Do not expose sensitive guest records in demonstration dashboards.
+Implement the data science integration as a separate service.
+
+Create a clear API configuration layer so the frontend can communicate with:
+1. The existing Node.js/Express transactional backend.
+2. The separate FastAPI analytical service.
+Do not merge the two services into one assumed backend.
+
+Do not hardcode local notebook file paths.
+
+Do not expose analytical API secrets.
+
+Use environment variables for service URLs and configuration.
+
+The frontend must gracefully handle:
+- Analytical service unavailable.
+- No guest profile found.
+- No historical data.
+- Incomplete response.
+- Invalid response.
+- Loading state.
+Use the actual analytical API response structures.
+
+If the supplied analytical API cannot be connected, display a clearly labelled demonstration state and identify what is required to complete the integration.
+
+Do not fabricate live analytical data.
+
+Keep operational and analytical dashboards separate or clearly differentiated within the same interface.
+Act as a senior hospitality product designer and UI/UX architect.
+
+Design a cohesive, premium, intuitive and accessible digital experience for KARAMO Hotels.
+
+The design must communicate luxury, comfort, warmth, trust, sophistication and effortless hospitality.
+
+Do not use a generic hotel booking template or a conventional SaaS dashboard aesthetic.
+
+The interface must feel purposefully designed for a premium hotel brand, with a consistent visual identity across the public website, guest account, booking journey, virtual assistant and staff portal.
+Adopt a contemporary luxury hospitality aesthetic with subtle classic influences.
+
+The design direction should combine:
+- Understated luxury.
+- Warm, welcoming hospitality.
+- Elegant typography.
+- Refined layouts.
+- High-quality architectural and hospitality photography.
+- Generous whitespace.
+- Sophisticated colour combinations.
+- Subtle transitions and animations.
+- Clear information hierarchy.
+Avoid excessive decoration, visual clutter, unnecessary gradients, oversized rounded cards, cartoon illustrations and generic stock-dashboard styling.
+
+Use visual restraint. Premium design should feel intentional, not crowded with expensive-looking ornaments.
+
+Where KARAMO brand assets or an established brand guide are supplied, preserve the existing brand identity and use those assets as the primary reference. The palette below is the proposed design direction where no conflicting brand specifications exist.
+Use the following colour system consistently across the application.
+Colour	Hex code	Primary application
+Deep Forest Green	#173D35	Primary brand colour, navigation, key buttons and important interface elements
+Dark Evergreen	#102D28	Dark sections, footer, premium backgrounds and hover states
+Warm Ivory	#F7F4EC	Main page backgrounds and light sections
+Champagne Gold	#C6A56B	Accent details, highlights, subtle borders and selected decorative elements
+Soft Sand	#E8DFD0	Secondary backgrounds, cards and dividers
+Charcoal	#292D2B	Main body text and headings
+Muted Sage	#A9B9AA	Secondary accents, supporting information and subtle interface elements
+White	#FFFFFF	Cards, forms and content surfaces
+Success Green	#287A52	Successful actions and confirmed states
+Warning Amber	#B7791F	Pending states and caution messages
+Error Red	#B54747	Errors, failed payments and destructive actions
+Information Blue	#356D91	Informational messages and neutral system alerts
+1. Deep Forest Green should be the primary brand colour.
+2. Warm Ivory should be the dominant light background.
+3. Champagne Gold should be used sparingly for refinement and emphasis, not as the primary colour for text or essential buttons.
+4. Dark Evergreen should anchor the footer and selected premium sections.
+5. Charcoal should be used for readable body text.
+6. Status colours must be consistent across guest and staff experiences.
+7. Never communicate booking or payment status through colour alone. Include clear text labels and, where appropriate, icons.
+8. Maintain accessible contrast between text and backgrounds.
+The overall interface should feel warm and inviting rather than dark and intimidating.
+Use a refined serif and sans-serif combination.
+
+Primary typography:
+- Headings: Playfair Display.
+- Body text and interface elements: Inter.
+Typography hierarchy:
+Element	Font	Suggested treatment
+Main hero heading	Playfair Display	Large, elegant, regular or medium weight
+Page headings	Playfair Display	Refined, prominent and readable
+Section headings	Playfair Display	Medium size with clear hierarchy
+Body text	Inter	Regular weight, comfortable line height
+Navigation	Inter	Medium weight, clean and legible
+Buttons	Inter	Medium or semibold
+Form labels	Inter	Medium weight
+Prices and booking details	Inter	Clear, prominent and easy to scan
+Captions and supporting text	Inter	Smaller but comfortably readable
+Use typography consistently.
+
+Avoid excessive uppercase text, overly decorative fonts, very thin text weights and unnecessarily small body text.
+
+If Playfair Display or Inter cannot be loaded, use suitable serif and sans-serif fallbacks without breaking the layout.
+Photography is a major part of the hospitality experience.
+
+Use high-quality images that communicate:
+- Beautiful hotel interiors.
+- Well-presented guest rooms.
+- Comfortable beds and living spaces.
+- Hotel architecture.
+- Dining and hospitality experiences.
+- Relaxing environments.
+- Guest amenities.
+Prioritise supplied KARAMO hotel images and approved brand assets.
+
+If images are not supplied, use carefully selected, high-quality illustrative hotel imagery as temporary demonstration assets.
+
+Do not present unrelated properties or photographs as verified images of KARAMO Hotels.
+
+Use appropriate image cropping, consistent aspect ratios and responsive image behaviour.
+
+Avoid stretched images, low-resolution photographs, inconsistent image styles and excessive image overlays.
+
+Provide descriptive alternative text for meaningful images.
+Establish a consistent design system containing:
+- Primary and secondary buttons.
+- Text buttons.
+- Form fields.
+- Date pickers.
+- Dropdowns.
+- Search panels.
+- Room cards.
+- Booking summary cards.
+- Status badges.
+- Navigation components.
+- Modals.
+- Alerts.
+- Notifications.
+- Accordions.
+- Tabs.
+- Tables.
+- Charts.
+- Empty states.
+- Loading skeletons.
+- Error messages.
+Use consistent spacing, alignment, typography, border treatments and interaction behaviour.
+
+Prefer clean layouts with generous spacing and clear visual grouping.
+
+Use rounded corners selectively and consistently. Avoid making every component excessively rounded.
+
+Create reusable components rather than independently styling each page.
+The public website should have a clear, elegant navigation structure.
+
+Desktop navigation should include:
+- KARAMO Hotels logo.
+- Home.
+- Rooms.
+- About Us.
+- Contact Us.
+- FAQ.
+- Sign In / My Account.
+- Prominent Book Now action.
+The mobile navigation should use an accessible menu with clear labels and sufficient touch targets.
+
+The homepage should establish the brand immediately through a strong hero section, quality imagery and a prominent room-search experience.
+
+The booking search panel should be easy to locate and use without requiring unnecessary scrolling.
+
+Use clear calls to action and avoid competing primary buttons.
+
+The footer should be visually distinct, organised into logical groups and consistent across all public pages.
+Design the booking journey to minimise friction and make guests confident about every step.
+
+The booking interface should include:
+- Clear page titles.
+- Visible booking progress.
+- Selected room information.
+- Stay dates.
+- Guest count.
+- Transparent price information.
+- Clear validation messages.
+- A persistent or easily accessible booking summary where appropriate.
+- Clearly labelled primary and secondary actions.
+Use a step-by-step booking flow rather than overwhelming guests with a long form.
+
+Avoid asking guests to enter the same information more than once.
+
+Ensure the interface clearly distinguishes:
+- Available rooms.
+- Unavailable rooms.
+- Booking pending.
+- Payment processing.
+- Payment successful.
+- Payment failed.
+- Booking confirmed.
+- Booking cancelled.
+Do not use ambiguous status labels.
+Create a clean account experience that allows guests to:
+- View their profile.
+- Access their bookings.
+- View booking details.
+- Check payment and booking status.
+- Access available support.
+- Submit eligible reviews.
+Use clear navigation and make important booking information easy to find.
+
+Protect personal booking information and ensure the interface respects backend authorisation.
+Integrate the virtual assistant naturally into the guest experience.
+
+Provide:
+- A recognisable chat launcher.
+- A clean conversation interface.
+- Clear message separation.
+- Typing/loading indicators.
+- Suggested questions.
+- Accessible input controls.
+- Clear error and fallback messages.
+- An obvious option to contact a human.
+The assistant should feel like a helpful digital concierge, not an intrusive pop-up.
+
+It must not obscure important booking controls or prevent users from navigating the website.
+
+On mobile, ensure the chat interface is usable without compromising access to the rest of the application.
+The staff portal should have a different visual emphasis from the guest-facing website while remaining part of the same KARAMO design system.
+
+Use a professional operational interface with:
+- Clear sidebar navigation.
+- A structured dashboard.
+- Readable data tables.
+- Well-labelled charts.
+- Search and filtering.
+- Status indicators.
+- Appropriate information density.
+- Consistent spacing.
+- Clear page titles and actions.
+Use the KARAMO colour palette, but prioritise clarity and efficient information scanning.
+
+Avoid decorative elements that make operational tasks slower.
+
+Use charts only where they communicate meaningful information.
+
+Provide clear explanations, labels, time periods and data-source distinctions for analytical metrics.
+This is a mandatory usability requirement across the entire platform.
+
+Users must never feel trapped on a page or be forced to restart a journey because they cannot find their way back.
+
+Implement consistent navigation and return paths throughout the application.
+Where appropriate, provide a visible Back button or breadcrumb navigation.
+
+Examples include:
+- Room details → Back to room results.
+- Booking details → Back to My Bookings.
+- Guest details → Back to room selection or booking summary.
+- Payment result → Back to booking details.
+- FAQ answer → Back to FAQ overview.
+- Contact form confirmation → Back to Contact Us or Home.
+The Back action should return users to the relevant previous context, not arbitrarily send them to the homepage.
+
+Where possible, preserve previously entered search criteria, selected dates, guest numbers, filters and booking progress.
+Provide a consistent way to return to the homepage.
+
+The KARAMO logo should link to the homepage.
+
+Provide an appropriate Home action on key completion, confirmation, error and standalone information screens.
+At the end of every major user journey, provide a clear next step and a way to return.
+
+Examples:
+
+Successful booking
+- View booking.
+- Return Home.
+Payment failure
+- Retry payment where permitted.
+- Return to booking summary.
+- Return Home.
+Registration completed
+- Sign in or continue to the guest account.
+- Return Home.
+Contact form submitted
+- Confirmation message.
+- Return to Contact Us.
+- Return Home.
+Review submitted
+- Confirmation message.
+- Return to My Bookings.
+- Return Home.
+Assistant conversation completed
+- Continue browsing.
+- Start a new conversation.
+- Return Home.
+Careers enquiry or application route
+- Return to Careers.
+- Return Home.
+Every error or empty state should offer an appropriate recovery route.
+
+Examples:
+- No rooms available → Change dates or return to room search.
+- Booking not found → Try again or contact support.
+- Payment verification pending → Check payment status or return to booking details.
+- Page not found → Return Home.
+- Analytics unavailable → Retry or return to the dashboard.
+- Contact submission failed → Retry without losing entered information where possible.
+Respect normal browser Back and Forward behaviour.
+
+Use appropriate routing and state management so users do not lose their progress unnecessarily.
+
+Avoid dead ends, broken links, circular navigation and unexpected redirects.
+
+Do not force users to restart a completed or partially completed journey simply to navigate elsewhere.
+Design mobile-first while ensuring the desktop experience remains polished.
+
+Support:
+- Mobile phones.
+- Tablets.
+- Desktop browsers.
+Ensure:
+- Navigation adapts appropriately.
+- Booking forms remain usable.
+- Room cards resize properly.
+- Tables remain readable through responsive layouts.
+- Images crop appropriately.
+- Modals fit smaller screens.
+- Chat remains accessible.
+- Buttons have sufficient touch targets.
+- No horizontal overflow.
+- No overlapping elements.
+- No clipped text or controls.
+Do not simply shrink the desktop interface to fit mobile. Adapt layouts and interaction patterns appropriately.
+Follow WCAG 2.2 AA principles where practical.
+
+Include:
+- Accessible colour contrast.
+- Semantic HTML.
+- Keyboard navigation.
+- Visible focus indicators.
+- Proper form labels.
+- Accessible dropdowns and accordions.
+- Descriptive alternative text.
+- Clear validation messages.
+- Appropriate heading hierarchy.
+- Screen-reader-friendly status messages.
+- Sufficient touch target sizes.
+- Reduced-motion support where appropriate.
+Do not rely on colour, position or icons alone to communicate important information.
+Every user action should produce an appropriate response.
+
+Implement:
+- Button loading states.
+- Form submission feedback.
+- Success notifications.
+- Error notifications.
+- Confirmation prompts for consequential actions.
+- Disabled states when actions are unavailable.
+- Clear hover, focus and active states.
+- Subtle transitions.
+- Appropriate skeleton loading.
+Do not use animations that delay essential actions or make the interface feel slow.
+
+Prevent accidental duplicate submissions, particularly during booking and payment.
+Maintain a consistent design system across every page and user journey.
+
+Before completion, inspect the application for:
+- Inconsistent typography.
+- Inconsistent spacing.
+- Conflicting colours.
+- Broken layouts.
+- Unreadable text.
+- Missing navigation.
+- Missing return paths.
+- Dead-end pages.
+- Unresponsive components.
+- Poor mobile behaviour.
+- Inaccessible controls.
+- Inconsistent booking and payment status presentation.
+Every major journey must have a logical beginning, clear progression, successful or unsuccessful completion state, and appropriate navigation back to the previous relevant page or homepage.
+
+The final interface must feel like one deliberately designed KARAMO Hotels product, not a collection of independently generated screens.
+
+Create an elegant, premium hospitality experience.
+
+The visual direction should communicate:
+- Luxury.
+- Warmth.
+- Trust.
+- Comfort.
+- Simplicity.
+- Professional hospitality.
+Use the supplied KARAMO brand assets where available.
+
+Avoid generic dashboard aesthetics and overused template layouts.
+
+Use:
+- Strong visual hierarchy.
+- Generous spacing.
+- High-quality hotel imagery.
+- Elegant typography.
+- Consistent button styles.
+- Clear forms.
+- Intuitive navigation.
+- Refined cards.
+- Appropriate icons.
+- Subtle animations.
+- Consistent colour usage.
+The visual experience must be coherent across the public website, booking journey, guest account, assistant and staff portal.
+
+Do not sacrifice usability for visual decoration.
+
+The booking journey should be especially simple and intuitive on mobile devices.
+Before coding, inspect the existing project environment and determine the appropriate frontend architecture.
+
+Reuse existing project structure where sensible.
+
+Do not unnecessarily replace working code or introduce multiple competing frameworks.
+
+Use reusable components and a clear separation of concerns.
+
+Create appropriate modules for:
+- Public website.
+- Guest authentication.
+- Room discovery.
+- Availability.
+- Booking.
+- Payment.
+- Guest account.
+- Virtual assistant.
+- Staff portal.
+- Analytics.
+- Shared UI components.
+- API clients.
+- Configuration.
+- Error handling.
+Use typed interfaces or schemas for API responses where the framework supports them.
+
+Centralise API configuration.
+
+Use environment variables for:
+- Backend base URL.
+- Analytics service base URL.
+- Public client configuration.
+- Other required integration settings.
+Never place secret keys in frontend environment variables.
+
+Never commit secrets.
+
+Provide a clear environment-variable example file without real credentials.
+
+Use appropriate routing and protected routes.
+
+Implement proper loading, empty, success and error states.
+
+Do not use hardcoded local data as a substitute for a functioning API.
+
+Where demonstration data is necessary, isolate it and label it clearly.
+Treat security as a core requirement, not a final cosmetic check.
+
+Implement or respect the following:
+- Authentication checks.
+- Protected routes.
+- Role-aware navigation.
+- Object-level authorisation through the backend.
+- Input validation.
+- Safe error messages.
+- Secure handling of authentication tokens.
+- No secrets in frontend code.
+- No exposure of another guest's bookings.
+- No exposure of payment credentials.
+- No unnecessary collection of personal information.
+- No sensitive information in console logs.
+- Clear AI disclosure.
+- Safe chatbot tool permissions.
+Do not assume that hiding a button provides security.
+
+The backend must enforce permissions.
+
+The supplied cybersecurity review identifies issues requiring further backend verification, including database schema completeness, security configuration, payment edge cases, webhook handling, automated tests and logging.
+
+Do not claim these have been resolved merely because the frontend has been built.
+
+Record any security limitations that remain.
+The platform must:
+- Work across mobile, tablet and desktop.
+- Use readable text sizes.
+- Have sufficient colour contrast.
+- Support keyboard navigation.
+- Use accessible form labels.
+- Provide meaningful validation messages.
+- Use appropriate semantic HTML.
+- Provide alternative text for meaningful images.
+- Avoid relying on colour alone to communicate status.
+- Provide visible focus states.
+- Use accessible modal and dropdown behaviour.
+Where practical, implement the event tracking structure in the product specification.
+
+Prioritise events relating to:
+- Search submitted.
+- Results viewed.
+- Room viewed.
+- Booking started.
+- Guest details completed.
+- Payment started.
+- Payment succeeded.
+- Payment failed.
+- Booking confirmed.
+- Confirmation viewed.
+- Assistant started.
+- Assistant escalated.
+Do not send unnecessary personal information in analytics events.
+
+Use consistent event names and timestamps.
+
+Do not fabricate historical conversion rates or performance improvements.
+
+Distinguish actual tracked events from demonstration metrics.
+Every visible interactive element must have a defined outcome.
+
+This includes:
+- Buttons.
+- Navigation links.
+- Forms.
+- Search controls.
+- Filters.
+- Tabs.
+- Accordions.
+- Dropdowns.
+- Modals.
+- Chat controls.
+- Booking actions.
+- Account actions.
+- Footer links.
+Do not leave non-functional buttons in the completed experience.
+
+If a feature is unavailable because the backend does not support it, explain the limitation and provide an appropriate alternative.
+
+Implement:
+1. Loading states.
+2. Empty states.
+3. Error states.
+4. Success states.
+5. Form validation.
+6. Responsive behaviour.
+7. Accessibility.
+8. Graceful API failure handling.
+9. Consistent navigation.
+10. Appropriate security boundaries.
+Before declaring the application complete, test the major journeys.
+- Homepage loads.
+- Guest searches for rooms.
+- Available rooms are displayed.
+- Guest opens a room.
+- Guest registers.
+- Email OTP verification works where credentials and backend configuration permit.
+- Guest logs in.
+- Guest creates a booking.
+- Booking summary is correct.
+- Paystack test checkout opens.
+- Payment verification is requested.
+- Booking confirmation reflects the backend result.
+- Guest retrieves booking history.
+- Payment failure.
+- Pending payment.
+- Invalid verification response.
+- Expired booking hold.
+- Network failure.
+- Repeated payment attempt.
+- About Us loads.
+- Contact Us loads.
+- Privacy Policy loads.
+- Terms & Conditions loads.
+- FAQ loads.
+- Careers loads.
+- Every footer and navigation link works.
+- Answers approved FAQs.
+- Does not invent availability or pricing.
+- Does not disclose another guest's information.
+- Provides a human assistance route.
+- Separate staff interface loads.
+- Demonstration mode is clearly identified if necessary.
+- Role boundaries are respected.
+- Analytics are clearly distinguished from live operational data.
+- Test desktop.
+- Test tablet.
+- Test mobile.
+- No broken routes.
+- No major console errors.
+- No exposed secrets.
+- No fake payment confirmations.
+- No broken forms.
+- No non-functional navigation links.
+- No fabricated live data.
+Do not claim that external services have been tested if the required credentials, database or service access were unavailable.
+Follow this sequence.
+Inspect all supplied files, repository links, source code, documentation and datasets.
+
+Identify:
+- Existing application framework.
+- Existing project structure.
+- Existing backend capabilities.
+- Existing API contracts.
+- Existing authentication workflow.
+- Existing payment workflow.
+- Available analytical APIs.
+- Available design and brand assets.
+- Integration gaps.
+- Conflicts between documentation and implementation.
+Do not start by generating a generic website.
+Determine how the frontend will connect to the existing backend and separate analytical service.
+
+Create a clear implementation structure.
+
+Do not replace the transactional backend.
+
+Do not duplicate business logic unnecessarily.
+Implement the public website, guest booking journey, information pages, assistant interface, staff portal and analytics interface.
+
+Prioritise functional integration over decorative extras.
+Connect the transactional backend.
+
+Connect the analytical service where available.
+
+Configure Paystack through the existing backend.
+
+Implement appropriate loading, error and fallback states.
+Test the major user journeys and the acceptance criteria.
+
+Identify unresolved dependencies and limitations.
+At the end, provide a concise but clear report containing:
+1. What has been implemented.
+2. What is fully functional.
+3. What is connected to the existing backend.
+4. What is connected to the data science service.
+5. What is operating in demonstration mode.
+6. What requires additional backend work.
+7. What requires credentials or environment configuration.
+8. What requires management or legal approval.
+9. Any known defects or limitations.
+10. The recommended next actions.
+Build the actual application, not merely a plan or a design proposal.
+
+Do not stop after inspecting the resources or describing the architecture.
+
+Do not ask me to approve every component individually.
+
+Make sensible implementation decisions based on the supplied requirements and existing technical capabilities.
+
+Do not invent hotel policies, room prices, guest records, contact information, legal claims, payment outcomes or live analytics.
+
+Do not silently replace the original MVP scope with a larger product.
+
+Where a requirement cannot be implemented because a dependency is missing, build the appropriate interface and integration boundary, clearly label its status and document what is required.
+
+Maintain a high standard of visual quality, functionality, consistency, security and usability.
+
+The final product must feel like one coherent KARAMO Hotels platform, not several separate demonstrations assembled into one website.
+
+Begin by inspecting the supplied resources and the existing project environment, then proceed with implementation.
