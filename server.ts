@@ -68,17 +68,52 @@ function detectEscalationTrigger(message: string, failedTurns: number): {
   return { triggered: false, reason: null };
 }
 
+const VERIFIED_FAQS = APPROVED_FAQS.filter(
+  (faq) => !faq.containsPlaceholder && !faq.placeholderNote
+);
+
+const UNCONFIRMED_TOPICS_NOTE =
+  'I cannot confirm details that have not been verified by KARAMO Hotels management (such as exact check-in/check-out hours, complimentary Wi-Fi or breakfast inclusions, specific on-site dining/spa/gym/pool/parking/shuttle facilities, street address, pet/smoking rules, cancellation cutoff/modification fees, or tax/VAT breakdowns). Please use "Talk to a Human" below so our team can assist you directly.';
+
 function matchFaqKnowledgeBase(message: string): {
   reply: string;
   matchedFaqIds: string[];
   uncertain: boolean;
 } {
+  const normalized = message.toLowerCase().trim();
+
+  if (
+    /^(hi|hello|hey|good\s+(morning|afternoon|evening)|greetings)[!.,\s]*$/i.test(
+      normalized
+    )
+  ) {
+    return {
+      reply:
+        'Hello! Welcome to KARAMO Hotels. I can help with verified FAQs on room tiers, booking steps, the 15-minute checkout hold, Paystack payment methods, email OTP verification, and your signed-in reservations. How may I assist you today?',
+      matchedFaqIds: [],
+      uncertain: false,
+    };
+  }
+
+  // Explicitly catch topics that exist only as unconfirmed placeholders in faqData.ts
+  if (
+    /\b((check[\s-]?(in|out)(\s+and\s+check[\s-]?(in|out))?\s*(time|times|hour|hours))|((time|times|hour|hours|when)\b.*\bcheck[\s-]?(in|out))|early\s+check|late\s+check|breakfast|wi-?fi|internet|gym|spa|pool|swimming|fitness|restaurant|dining|lounge|parking|shuttle|airport|address|where\s+is|location|located|pet|pets|smoking|smoke|vat|tax|service\s+fee|cancellation\s+(window|fee|fees|policy)|refund\s+policy|modify\s+fee|incidental\s+deposit)\b/i.test(
+      normalized
+    )
+  ) {
+    return {
+      reply: UNCONFIRMED_TOPICS_NOTE,
+      matchedFaqIds: [],
+      uncertain: true,
+    };
+  }
+
   const stopWords = new Set([
     'how', 'does', 'the', 'work', 'what', 'are', 'can', 'when', 'for', 'with',
     'you', 'your', 'that', 'this', 'from', 'have', 'and', 'not', 'who', 'where',
+    'karamo', 'hotel', 'hotels', 'about', 'tell', 'please', 'could', 'would',
   ]);
-  const tokens = message
-    .toLowerCase()
+  const tokens = normalized
     .replace(/[^a-z0-9\s]/g, ' ')
     .split(/\s+/)
     .filter((t) => t.length > 2 && !stopWords.has(t));
@@ -92,12 +127,40 @@ function matchFaqKnowledgeBase(message: string): {
     };
   }
 
-  const scored = APPROVED_FAQS.map((faq) => {
+  const scored = VERIFIED_FAQS.map((faq) => {
     const haystack = `${faq.category} ${faq.question} ${faq.answer}`.toLowerCase();
     let score = 0;
     for (const token of tokens) {
       if (haystack.includes(token)) score += 1;
       if (faq.question.toLowerCase().includes(token)) score += 2;
+    }
+    if (
+      /\b(room|rooms|category|categories|tier|tiers|suite|suites|deluxe|executive|presidential|standard)\b/i.test(
+        normalized
+      ) &&
+      faq.id === 'faq-10'
+    ) {
+      score += 3;
+    }
+    if (
+      /\b(book|booking|procedure|procedures|reserve|reservation|checkout|steps)\b/i.test(
+        normalized
+      ) &&
+      faq.id === 'faq-1'
+    ) {
+      score += 2;
+    }
+    if (
+      /\b(hold|15|minute|minutes|reserved|expire|expired)\b/i.test(normalized) &&
+      faq.id === 'faq-2'
+    ) {
+      score += 2;
+    }
+    if (
+      /\b(pay|payment|paystack|card|ussd|transfer|mobile\s+money)\b/i.test(normalized) &&
+      faq.id === 'faq-15'
+    ) {
+      score += 2;
     }
     return { faq, score };
   })
@@ -108,7 +171,7 @@ function matchFaqKnowledgeBase(message: string): {
   if (scored.length === 0) {
     return {
       reply:
-        'I do not have a confirmed answer for that specific question in our approved KARAMO Hotels documentation. I recommend speaking directly with a human member of our team so we never share unverified details.',
+        'I do not have a verified answer for that question in our approved KARAMO Hotels documentation. Please use "Talk to a Human" below so a member of our team can assist you directly.',
       matchedFaqIds: [],
       uncertain: true,
     };
@@ -294,8 +357,36 @@ async function startServer() {
       });
     }
 
+    const isTransientGeminiError = (err: unknown): boolean => {
+      const msg = err instanceof Error ? err.message : String(err || '');
+      return /\b(429|500|502|503|504)\b|UNAVAILABLE|RESOURCE_EXHAUSTED|DEADLINE_EXCEEDED|AbortError|aborted|timeout|ETIMEDOUT|ECONNRESET|fetch failed/i.test(
+        msg
+      );
+    };
+
+    const callGeminiModel = async (
+      model: string,
+      contents: string,
+      systemInstruction: string,
+      thinkingLevel: ThinkingLevel,
+      timeoutMs: number
+    ): Promise<string> => {
+      const response = await ai.models.generateContent({
+        model,
+        contents,
+        config: {
+          systemInstruction,
+          thinkingConfig: { thinkingLevel },
+          abortSignal: AbortSignal.timeout(timeoutMs),
+        },
+      });
+      return response.text?.trim() || '';
+    };
+
+    const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
     try {
-      const faqContext = APPROVED_FAQS.map(
+      const faqContext = VERIFIED_FAQS.map(
         (f) => `[Q${f.number} - ${f.category}] ${f.question}\nA: ${f.answer}`
       ).join('\n\n');
 
@@ -311,13 +402,14 @@ async function startServer() {
       const systemInstruction = `You are the KARAMO Hotels AI Virtual Concierge.
 Strict Rules:
 1. Never claim to be human. Be courteous, concise, and clear.
-2. Answer ONLY using the Approved Hotel FAQs below, the Room Catalog summary (${dataMode} mode), and the Authenticated Guest Context if signed in.
-3. NEVER invent room prices, room availability for specific dates (direct user to the Rooms Search bar if dates haven't been checked), street addresses, check-in/check-out times (those are unconfirmed placeholders), taxes, refund promises, or booking confirmations.
-4. Clearly remind the user if they are viewing Sandbox Demo data vs Live data when quoting catalog rates.
-5. Never claim you have issued a refund, modified a booking, or cancelled a reservation—explain that online modifications/cancellations require human staff and offer to escalate.
-6. If the guest mentions an emergency/safety issue, payment dispute, dissatisfaction, or asks something outside approved FAQs, clearly tell them you are connecting/escalating to a human KARAMO Hotels team member.
+2. Answer ONLY using the Verified Approved FAQs below, the Room Catalog summary (${dataMode} mode), and the Authenticated Guest Context if signed in.
+3. NEVER invent live room availability for dates (direct guests to the Rooms Search bar), room prices not in the catalog, bookings, payment confirmations, cancellation cutoffs/fees, or hotel facilities.
+4. The following items are NOT CONFIRMED in approved records: exact check-in/check-out times, early/late check-in fees, complimentary Wi-Fi or breakfast inclusions, on-site facilities (pool, spa, gym, dining hours, parking, airport shuttle), property street address, pet/smoking rules, third-party check-in ID rules, accepted ID/incidental deposit details, and VAT/tax breakdowns. If asked about ANY of these or anything outside the Verified FAQs below, politely state that you cannot confirm those details right now and invite the guest to click "Talk to a Human" below.
+5. Clearly mention when room rates shown come from Sandbox Preview data (${dataMode} mode) rather than a live property feed.
+6. Never claim you have issued a refund, modified a booking, or cancelled a reservation—explain that online modifications/cancellations require human staff and offer to escalate.
+7. If the guest mentions an emergency/safety issue, payment dispute, dissatisfaction, or asks for a human, clearly direct them to "Talk to a Human" below.
 
-=== APPROVED 27 FAQs ===
+=== VERIFIED APPROVED FAQs ===
 ${faqContext}
 
 === CURRENT ROOM CATALOG (${dataMode.toUpperCase()}) ===
@@ -331,32 +423,68 @@ ${authContext}`;
         `Guest: ${trimmed}`,
       ].join('\n');
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-4-hydrogen',
-        contents: conversationPrompt,
-        config: {
-          systemInstruction,
-          thinkingConfig: { thinkingLevel: ThinkingLevel.LOW },
-        },
-      });
+      let replyText = '';
+      let activeModelUsed = 'gemini-3.1-flash-lite';
 
-      const replyText = response.text?.trim() || faqFallback.reply;
+      // Primary model attempt + single fast retry on transient 503/429/timeout
+      for (let attempt = 0; attempt < 2; attempt += 1) {
+        try {
+          replyText = await callGeminiModel(
+            'gemini-3.1-flash-lite',
+            conversationPrompt,
+            systemInstruction,
+            ThinkingLevel.MINIMAL,
+            7000
+          );
+          if (replyText) break;
+        } catch (primaryErr) {
+          if (attempt === 0 && isTransientGeminiError(primaryErr)) {
+            await sleep(350);
+            continue;
+          }
+          // Fallback Gemini model attempt
+          activeModelUsed = 'gemini-3-flash-preview';
+          replyText = await callGeminiModel(
+            'gemini-3-flash-preview',
+            conversationPrompt,
+            systemInstruction,
+            ThinkingLevel.LOW,
+            7000
+          );
+          break;
+        }
+      }
+
+      const finalReply = replyText || faqFallback.reply;
+      const modelIndicatesUncertainty =
+        /talk to a human|cannot confirm|not confirmed|not been verified|contact our (support|team|front desk)/i.test(
+          finalReply
+        );
 
       return res.json({
-        reply: replyText,
-        source: 'gemini_grounded',
-        escalateRecommended: escalation.triggered || faqFallback.uncertain,
+        reply: finalReply,
+        source: replyText ? `gemini_grounded:${activeModelUsed}` : 'faq_fallback',
+        escalateRecommended:
+          escalation.triggered || faqFallback.uncertain || modelIndicatesUncertainty,
         escalationReason: escalation.reason,
         matchedFaqIds: faqFallback.matchedFaqIds,
       });
     } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Unable to reach Gemini concierge service.';
-      return res.status(502).json({
-        message: `AI Concierge service error: ${errorMessage}. Check Settings > Secrets if GEMINI_API_KEY is configured, or use the approved FAQ & Human Support options.`,
-        fallbackReply: faqFallback.reply,
-        escalateRecommended: true,
-        escalationReason: escalation.reason || 'AI model unavailable — human support available.',
+      const safeLog = err instanceof Error ? err.message : 'Unknown upstream error';
+      console.warn('[Concierge] Gemini unavailable, serving verified FAQ fallback:', safeLog);
+
+      const fallbackText = escalation.triggered
+        ? `${faqFallback.reply}\n\n${escalation.reason} You can use the "Talk to a Human" button below to connect directly with KARAMO Hotels support.`
+        : faqFallback.reply;
+
+      return res.status(200).json({
+        reply: fallbackText,
+        source: 'faq_fallback',
+        escalateRecommended: escalation.triggered || faqFallback.uncertain,
+        escalationReason:
+          escalation.reason ||
+          (faqFallback.uncertain ? 'Concierge could not verify this detail — human support available.' : null),
+        matchedFaqIds: faqFallback.matchedFaqIds,
       });
     }
   });

@@ -117,44 +117,97 @@ export const ConciergeWidget: React.FC = () => {
         }
       }
 
-      const res = await fetch('/api/assistant/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: trimmed,
-          history: messages.slice(-6).map((m) => ({ role: m.role, text: m.text })),
-          roomCatalogSummary: roomsCatalog.map((r) => ({
-            id: r.id,
-            room_type: r.room_type,
-            price_per_night: r.price_per_night,
-            capacity: r.capacity,
-          })),
-          authenticatedUserContext: isGuestAuthenticated
-            ? {
-                isAuthenticated: true,
-                firstName: guestUser?.full_name.split(' ')[0],
-                bookingsSummary,
-              }
-            : { isAuthenticated: false },
-          dataMode,
-          failedTurns,
-        }),
-      });
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), 20000);
 
-      const data = (await res.json()) as {
+      let res: Response;
+      try {
+        res = await fetch('/api/assistant/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
+          body: JSON.stringify({
+            message: trimmed,
+            history: messages.slice(-6).map((m) => ({ role: m.role, text: m.text })),
+            roomCatalogSummary: roomsCatalog.map((r) => ({
+              id: r.id,
+              room_type: r.room_type,
+              price_per_night: r.price_per_night,
+              capacity: r.capacity,
+            })),
+            authenticatedUserContext: isGuestAuthenticated
+              ? {
+                  isAuthenticated: true,
+                  firstName: guestUser?.full_name.split(' ')[0],
+                  bookingsSummary,
+                }
+              : { isAuthenticated: false },
+            dataMode,
+            failedTurns,
+          }),
+        });
+      } finally {
+        window.clearTimeout(timeoutId);
+      }
+
+      const contentType = res.headers.get('content-type') || '';
+      const isJson = contentType.toLowerCase().includes('application/json');
+
+      if (!isJson) {
+        setFailedTurns((c) => c + 1);
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `err-${Date.now()}`,
+            role: 'assistant',
+            text: 'I could not reach the concierge service right now. Please use "Talk to a Human" below for direct assistance.',
+            escalateRecommended: true,
+            escalationReason: 'Non-JSON gateway response',
+          },
+        ]);
+        return;
+      }
+
+      let data: {
         reply?: string;
         fallbackReply?: string;
         message?: string;
         source?: string;
         escalateRecommended?: boolean;
         escalationReason?: string | null;
-      };
+      } | null = null;
+
+      try {
+        data = await res.json();
+      } catch {
+        data = null;
+      }
+
+      if (!res.ok || !data) {
+        const safeFallback =
+          data?.fallbackReply?.trim() ||
+          (res.status === 400 && data?.message ? data.message : '') ||
+          'I could not reach the concierge service right now. Please use "Talk to a Human" below for direct assistance.';
+
+        setFailedTurns((c) => c + 1);
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `err-${Date.now()}`,
+            role: 'assistant',
+            text: safeFallback,
+            escalateRecommended: true,
+            escalationReason: 'Concierge temporarily unavailable',
+            source: data?.source,
+          },
+        ]);
+        return;
+      }
 
       const replyText =
-        data.reply ||
-        (data.fallbackReply
-          ? `${data.message}\n\nApproved FAQ Guidance: ${data.fallbackReply}`
-          : data.message || 'Unable to answer right now. Please connect with human support.');
+        data.reply?.trim() ||
+        data.fallbackReply?.trim() ||
+        'I could not confirm an answer right now. Please use "Talk to a Human" below for direct assistance.';
 
       if (data.escalateRecommended) {
         setFailedTurns((c) => c + 1);

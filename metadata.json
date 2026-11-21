@@ -2,5 +2,7 @@
   "name": "KARAMO Hotels — Digital Guest Experience Platform",
   "description": "Digital Guest Experience Platform for KARAMO Hotels featuring room discovery, verified OTP authentication, Paystack test-mode booking, virtual concierge assistant, and a role-aware staff & data science portal.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }
